@@ -60,11 +60,14 @@ public class PlayerControllerScript : MonoBehaviour
 		}
 
 		if (_designatedTile != _currentTile) {
-			var distanceFromDesignatedTile = ((Vector2) transform.position - _offset - _designatedTile).magnitude;
-			if (distanceFromDesignatedTile < 0.05) {
+			var distanceFromDesignatedTile = ((Vector2) transform.position - _offset - _designatedTile);
+			var directionComponent = GetComponent(distanceFromDesignatedTile, DirectionToVector2(_direction));
+			
+			if (directionComponent > 0.0f) {
 				transform.position = (Vector3)(_designatedTile + _offset);
 				_currentTile = _designatedTile;
-                _moving = false;
+				if (wantToMove == false)
+                    _moving = false;
 			} else {
 				transform.position += (Vector3) DirectionToVector2(_direction) * _velocity * Time.fixedDeltaTime;
 				Debug.Log(Vector3.left * _velocity * Time.fixedDeltaTime);
@@ -82,7 +85,11 @@ public class PlayerControllerScript : MonoBehaviour
 	{
 		if (_designatedTile == _currentTile) {
 			_sinceStartOfDirection += Time.fixedDeltaTime;
-			_direction = direction;
+			if (direction != _direction) {
+                _direction = direction;
+				_animator.SetTrigger("ChangeDirection");
+
+			}
 		}
 
 		return true;
@@ -100,5 +107,14 @@ public class PlayerControllerScript : MonoBehaviour
             default:
 	            return Vector2.down;
         }
+	}
+
+	private float GetComponent(Vector2 a, Vector2 b)
+	{
+		if (a.x * b.x == 0.0f) {
+			return a.y * b.y;
+		} else {
+			return a.x * b.x;
+		}
 	}
 }
