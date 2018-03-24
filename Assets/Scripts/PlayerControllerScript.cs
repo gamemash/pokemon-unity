@@ -1,5 +1,4 @@
-﻿using NUnit.Framework.Internal;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerControllerScript : MonoBehaviour
 {
@@ -21,17 +20,15 @@ public class PlayerControllerScript : MonoBehaviour
 	private Vector2 _designatedTile = new Vector2();
 
 	private Animator _animator;
-	private Vector2 _offset = new Vector2(0.5f, 0.7f);
+	private readonly Vector2 _offset = new Vector2(0.5f, 0.7f);
 
-	private float _velocity = 2.0f;
+	private readonly float _velocity = 2.0f;
 	private bool _wantToStop;
 
 	// Use this for initialization
 	void Start ()
 	{
-
 		_animator = GetComponent<Animator>();
-
 	}
 	
 	// Update is called once per frame
