@@ -11,6 +11,9 @@ public class PlayerControllerScript : MonoBehaviour
 		Left = 3
 	}
 
+
+	public bool ReceiveInput = false;
+	
 	private Direction _direction = Direction.Up;
 	private Direction _nextDirection = Direction.Up;
 	private bool _moving = false;
@@ -34,6 +37,8 @@ public class PlayerControllerScript : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
+		if (!ReceiveInput) return;
+		
 		var wantToMove = false;
 		if (Input.GetAxis("Horizontal") > 0.1) {
 			wantToMove = SetDirection(Direction.Right);
