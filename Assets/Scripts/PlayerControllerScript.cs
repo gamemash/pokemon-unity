@@ -13,6 +13,7 @@ public class PlayerControllerScript : MonoBehaviour
 	}
 
 	private Direction _direction = Direction.Up;
+	private Direction _nextDirection = Direction.Up;
 	private bool _moving = false;
 	private float _sinceStartOfDirection = 0.0f;
 
@@ -51,12 +52,16 @@ public class PlayerControllerScript : MonoBehaviour
 
 		if (wantToMove == false) {
 			_sinceStartOfDirection = 0.0f;
+			if (_currentTile == _designatedTile)
+				_moving = false;
 		}
 
 
-		if (_sinceStartOfDirection > 0.1) {
+		if (_sinceStartOfDirection > 0.1 && _currentTile == _designatedTile) {
 			_moving = true;
-			_designatedTile = _currentTile + DirectionToVector2(_direction);
+			if (NextTileIsAccessible()) {
+				_designatedTile = _currentTile + DirectionToVector2(_nextDirection);
+			}
 		}
 
 		if (_designatedTile != _currentTile) {
@@ -64,14 +69,22 @@ public class PlayerControllerScript : MonoBehaviour
 			var directionComponent = GetComponent(distanceFromDesignatedTile, DirectionToVector2(_direction));
 			
 			if (directionComponent > 0.0f) {
-				transform.position = (Vector3)(_designatedTile + _offset);
-				_currentTile = _designatedTile;
+                _currentTile = _designatedTile;
+                _direction = _nextDirection;
+                if (wantToMove && NextTileIsAccessible()) {
+                    transform.position += (Vector3) DirectionToVector2(_direction) * _velocity * Time.fixedDeltaTime;
+                    _designatedTile = _currentTile + DirectionToVector2(_direction);
+                } else {
+					transform.position = (Vector3) (_designatedTile + _offset);
+				}
+
 				if (wantToMove == false)
                     _moving = false;
 			} else {
 				transform.position += (Vector3) DirectionToVector2(_direction) * _velocity * Time.fixedDeltaTime;
-				Debug.Log(Vector3.left * _velocity * Time.fixedDeltaTime);
 			}
+		} else {
+			_direction = _nextDirection;
 		}
 
 		
@@ -81,16 +94,33 @@ public class PlayerControllerScript : MonoBehaviour
 
 	}
 
-	private bool SetDirection(Direction direction)
+	private bool NextTileIsAccessible()
 	{
-		if (_designatedTile == _currentTile) {
-			_sinceStartOfDirection += Time.fixedDeltaTime;
-			if (direction != _direction) {
-                _direction = direction;
-				_animator.SetTrigger("ChangeDirection");
-
+		var currentDirection = DirectionToVector2(_direction);
+		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position, currentDirection);
+		if (hit.collider != null) {
+			switch (_direction) {
+				case Direction.Up:
+				case Direction.Right:
+                    if (GetComponent(hit.point - _currentTile, currentDirection) < 1.5f) {
+                        return false;
+                    }
+					break;
+				case Direction.Left:
+				case Direction.Down:
+                    if (GetComponent(hit.point - _currentTile, currentDirection) < 0.5f) {
+                        return false;
+                    }
+					break;
 			}
 		}
+		return true;
+	}
+
+	private bool SetDirection(Direction direction)
+	{
+        _sinceStartOfDirection += Time.fixedDeltaTime;
+        _nextDirection = direction;
 
 		return true;
 	}
