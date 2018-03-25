@@ -14,8 +14,8 @@ public class GameControllerScript : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetButtonDown("Submit")) {
-			Player.GetComponent<PlayerControllerScript>().ReceiveInput = !Player.GetComponent<PlayerControllerScript>().ReceiveInput;
-		}
+		// if (Input.GetButtonDown("Submit")) {
+		// 	Player.GetComponent<PlayerControllerScript>().ReceiveInput = !Player.GetComponent<PlayerControllerScript>().ReceiveInput;
+		// }
 	}
 }

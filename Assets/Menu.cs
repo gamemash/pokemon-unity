@@ -64,7 +64,6 @@ public class Menu : MonoBehaviour {
 		}
 
 
-		Debug.Log (highlightedItem);
 		selectorRect.anchoredPosition = new Vector2 (selectorRect.anchoredPosition.x, -29f * (highlightedItem + 1));
 	}
 

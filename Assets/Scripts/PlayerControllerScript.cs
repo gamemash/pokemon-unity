@@ -12,26 +12,32 @@ public class PlayerControllerScript : MonoBehaviour
 	}
 
 
-	public bool ReceiveInput = false;
+	public bool ReceiveInput = true;
 	
 	private Direction _direction = Direction.Up;
 	private Direction _nextDirection = Direction.Up;
 	private bool _moving = false;
 	private float _sinceStartOfDirection = 0.0f;
 
-	private Vector2 _currentTile = new Vector2();
-	private Vector2 _designatedTile = new Vector2();
+	private Vector2 _currentTile;
+	private Vector2 _designatedTile;
 
 	private Animator _animator;
 	private readonly Vector2 _offset = new Vector2(0.5f, 0.7f);
 
-	private readonly float _velocity = 2.0f;
+	private readonly float _velocity = 3.0f;
 	private bool _wantToStop;
 
 	// Use this for initialization
 	void Start ()
 	{
 		_animator = GetComponent<Animator>();
+		_currentTile = new Vector2(
+			Mathf.Round(transform.position.x - _offset.x),
+			Mathf.Round(transform.position.y - _offset.y)
+			);
+		_designatedTile = _currentTile;
+
 	}
 	
 	// Update is called once per frame
@@ -100,7 +106,7 @@ public class PlayerControllerScript : MonoBehaviour
 	{
 		var currentDirection = DirectionToVector2(_direction);
 		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position, currentDirection);
-		if (hit.collider != null) {
+		if (hit.collider != null && hit.transform.CompareTag("Block")) {
 			switch (_direction) {
 				case Direction.Up:
 				case Direction.Right:
