@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using lib;
+using UnityEngine;
 
 public class PlayerControllerScript : MonoBehaviour
 {
-
-	private enum Direction
+	public enum Direction
 	{
 		Up = 0,
 		Right = 1,
@@ -104,28 +104,51 @@ public class PlayerControllerScript : MonoBehaviour
 
 	private bool NextTileIsAccessible()
 	{
-		var currentDirection = DirectionToVector2(_direction);
-		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position, currentDirection);
-		if (hit.collider != null && hit.transform.CompareTag("Block")) {
-			switch (_direction) {
-				case Direction.Up:
-				case Direction.Right:
-                    if (GetComponent(hit.point - _currentTile, currentDirection) < 1.5f) {
-                        return false;
-                    }
-					break;
-				case Direction.Left:
-				case Direction.Down:
-                    if (GetComponent(hit.point - _currentTile, currentDirection) < 0.5f) {
-                        return false;
-                    }
-					break;
+		var tile = GetTileInFront();
+		if (tile != null) {
+			if (tile.CompareTag("Block")) {
+				return false;
+			} else if (tile.CompareTag("Pathway")) {
+				tile.GetComponent<Pathway>().GoThrough(gameObject);
+				return false;
 			}
 		}
 		return true;
 	}
 
-	private bool SetDirection(Direction direction)
+	public void MoveForward(int steps)
+	{
+		_designatedTile = _currentTile + DirectionToVector2(_direction) * steps;
+	}
+
+	public GameObject GetTileInFront()
+	{
+		var currentDirection = DirectionToVector2(_direction);
+		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position, currentDirection);
+		if (hit.collider != null) {
+			switch (_direction) {
+				case Direction.Up:
+				case Direction.Right:
+					if (GetComponent(hit.point - _currentTile, currentDirection) < 1.5f) {
+						return hit.collider.gameObject;
+					}
+
+					break;
+				case Direction.Left:
+				case Direction.Down:
+					if (GetComponent(hit.point - _currentTile, currentDirection) < 0.5f) {
+						return hit.collider.gameObject;
+					}
+
+					break;
+			}
+		}
+
+		return null;
+	}
+
+
+	public bool SetDirection(Direction direction)
 	{
         _sinceStartOfDirection += Time.fixedDeltaTime;
         _nextDirection = direction;
@@ -154,5 +177,11 @@ public class PlayerControllerScript : MonoBehaviour
 		} else {
 			return a.x * b.x;
 		}
+	}
+
+	public void SetPosition(Vector2 position)
+	{
+        _currentTile = _designatedTile = position;
+        transform.position = position + _offset;
 	}
 }
