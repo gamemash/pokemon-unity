@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4969973651749522}
   - component: {fileID: 95649222397887326}
   m_Layer: 0
-  m_Name: AshContainerPrefab
+  m_Name: AshContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

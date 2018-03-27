@@ -4,14 +4,20 @@ using UnityEngine;
 
 public class GameControllerScript : MonoBehaviour
 {
-
-	public GameObject Player;
-
-	// Use this for initialization
-	void Start () {
-		
-	}
 	
+	// Use this for initialization
+	void Start ()
+	{
+		//SpawnPlayer();
+	}
+
+	private void SpawnPlayer()
+	{
+		var playerPrefab = Resources.Load("Prefabs/AshContainer") as GameObject;
+		var player = Instantiate(playerPrefab);
+		player.name = "PlayerContainer";
+	}
+
 	// Update is called once per frame
 	void Update () {
 		// if (Input.GetButtonDown("Submit")) {

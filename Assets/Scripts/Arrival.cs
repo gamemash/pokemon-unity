@@ -2,51 +2,55 @@
 using UnityEngine;
 using UnityEngine.Playables;
 
-namespace DefaultNamespace
+public class Arrival : MonoBehaviour
 {
-    public class Arrival: MonoBehaviour
+    public string EntranceName;
+
+    private bool _playing;
+    private float _sinceStartOfAnimation;
+    private PlayableDirector _director;
+
+    public void Start()
     {
-        public string EntranceName;
-        public GameObject Player;
-        
-        private bool _playing;
-        private float _sinceStartOfAnimation;
-        private PlayableDirector _director;
+        _director = GetComponent<PlayableDirector>();
+        // foreach (var output in _director.playableAsset.outputs)
+        // U//{
+        // U//    Debug.Log(output.streamName);
+        // U//    // identify the tracks that you want to bind
+        // U//    //if (output.streamName.StartsWith("BindMe"))
+        // U//    //{
+        // U//    //    // go.GetComponent<> may be necessary if the track uses a component and
+        // U//    //    // not a game object
+        // U//    //    director.SetGenericBinding(output.sourceObject, go);
+        // U//    //}
+        // U//}
+        if (Data.Get("Entrance") == EntranceName) {
+            SetPosition();
+            if (_director != null)
+                PlayAnimation();
+        }
+    }
 
-        public void Start()
-        {
-            _director = GetComponent<PlayableDirector>();
-            if (Data.Get("Entrance") == EntranceName)
-            {
+    public void FixedUpdate()
+    {
+        if (_playing) {
+            _sinceStartOfAnimation += Time.fixedDeltaTime;
+            if (_sinceStartOfAnimation > _director.duration) {
+                _playing = false;
                 SetPosition();
-                if (_director != null)
-                    PlayAnimation();
             }
         }
+    }
+
+    private void SetPosition()
+    {
         
-        public void FixedUpdate()
-        {
-            if (_playing)
-            {
-                _sinceStartOfAnimation += Time.fixedDeltaTime;
-                if (_sinceStartOfAnimation > _director.duration)
-                {
-                    _playing = false;
-                    SetPosition();
-                }
-            }
-        }
+        GameObject.Find("PlayerController/Ash").GetComponent<PlayerControllerScript>().SetPosition(transform.position);
+    }
 
-        private void SetPosition()
-        {
-            Player.GetComponent<PlayerControllerScript>().SetPosition(transform.position);
-        }
-
-        private void PlayAnimation()
-        {
-
-            _playing = true;
-            _director.Play();
-        }
+    private void PlayAnimation()
+    {
+        _playing = true;
+        _director.Play();
     }
 }
