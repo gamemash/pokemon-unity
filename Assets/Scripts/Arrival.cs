@@ -7,7 +7,6 @@ namespace DefaultNamespace
     public class Arrival: MonoBehaviour
     {
         public string EntranceName;
-        public GameObject Player;
         
         private bool _playing;
         private float _sinceStartOfAnimation;
@@ -39,7 +38,8 @@ namespace DefaultNamespace
 
         private void SetPosition()
         {
-            Player.GetComponent<PlayerControllerScript>().SetPosition(transform.position);
+            Debug.Log(GameObject.Find("PlayerContainer/Ash"));
+            GameObject.Find("PlayerContainer/Ash").GetComponent<PlayerControllerScript>().SetPosition(transform.position);
         }
 
         private void PlayAnimation()

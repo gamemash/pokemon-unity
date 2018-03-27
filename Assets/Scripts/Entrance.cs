@@ -14,6 +14,14 @@ public class Entrance : MonoBehaviour
     public void Start()
     {
         _director = GetComponent<PlayableDirector>();
+        if (_director != null)
+        {
+            foreach (var output in _director.playableAsset.outputs)
+            {
+                Debug.Log(output.sourceObject);
+            }
+        }
+            
     }
 
     public void FixedUpdate()
