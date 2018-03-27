@@ -108,8 +108,9 @@ public class PlayerControllerScript : MonoBehaviour
 		if (tile != null) {
 			if (tile.CompareTag("Block")) {
 				return false;
-			} else if (tile.CompareTag("Pathway")) {
-				tile.GetComponent<Pathway>().GoThrough(gameObject);
+			} else if (tile.CompareTag("Pathway"))
+			{
+				tile.GetComponent<Entrance>().GoThrough();
 				return false;
 			}
 		}
