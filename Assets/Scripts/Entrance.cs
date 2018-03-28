@@ -31,7 +31,7 @@ public class Entrance : MonoBehaviour
 
     public void PlayAnimation()
     {
-
+        GameControllerScript.BindPlayerToDirector(_director);
         _playing = true;
         _director.Play();
     }
