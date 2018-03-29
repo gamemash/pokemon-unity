@@ -40,6 +40,8 @@ public class PlayerControllerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!ReceiveInput) return;
+        
         _wantsToMove = DetermineInput();
         
         if (_wantsToMove && _standingStill && NextTileIsAccessible()) {
@@ -50,6 +52,11 @@ public class PlayerControllerScript : MonoBehaviour
         if (!_wantsToMove && _standingStill) {
             _animator.SetInteger("Direction", (int) _direction);
             _animator.SetBool("Moving", false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StartCoroutine(ThroughDoorAnimation());
         }
         
     }
@@ -80,10 +87,25 @@ public class PlayerControllerScript : MonoBehaviour
             } else if (tile.CompareTag("Pathway")) {
                 tile.GetComponent<Entrance>().GoThrough();
                 return false;
+            } else if (tile.CompareTag("Respawn"))
+            {
+                Debug.Log(tile);
+                ReceiveInput = false;
+                tile.GetComponent<DoorScript>().GoThrough(gameObject);
+                return false;
             }
         }
 
         return true;
+    }
+
+    IEnumerator ThroughDoorAnimation()
+    {
+        Debug.Log("Open door");
+        StartCoroutine(Movement(_currentTile + DirectionToVector2(_direction) * 2, _currentTile));
+        yield return new WaitForSeconds(2);
+        Debug.Log("Close door");
+
     }
     
     IEnumerator Movement (Vector2 targetTile, Vector2 currentTile)
@@ -111,6 +133,7 @@ public class PlayerControllerScript : MonoBehaviour
     public void MoveForward(int steps)
     {
         _designatedTile = _currentTile + DirectionToVector2(_direction) * steps;
+        StartCoroutine(Movement(_designatedTile, _currentTile));
     }
 
     public GameObject GetTileInFront()
