@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class PlayerControllerScript : MonoBehaviour
 {
@@ -13,9 +14,6 @@ public class PlayerControllerScript : MonoBehaviour
     public bool ReceiveInput = true;
 
     private Direction _direction = Direction.Up;
-    private Direction _nextDirection = Direction.Up;
-    private bool _moving = false;
-    private float _sinceStartOfDirection = 0.0f;
 
     private Vector2 _currentTile;
     private Vector2 _designatedTile;
@@ -24,9 +22,11 @@ public class PlayerControllerScript : MonoBehaviour
     private readonly Vector2 _offset = new Vector2(0.5f, 0.7f);
 
     private readonly float _velocity = 3.0f;
-    private bool _wantToStop;
+    private float _timeSinceDirectionChange = 0.0f;
 
-    // Use this for initialization
+    private bool _standingStill = true;
+    private bool _wantsToMove = false;
+    
     void Start()
     {
         _animator = GetComponent<Animator>();
@@ -36,67 +36,35 @@ public class PlayerControllerScript : MonoBehaviour
         );
         _designatedTile = _currentTile;
     }
-
+     
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        if (!ReceiveInput) return;
-
-        var wantToMove = DetermineInput();
-
-        if (wantToMove == false) {
-            _sinceStartOfDirection = 0.0f;
-            if (_currentTile == _designatedTile)
-                _moving = false;
+        _wantsToMove = DetermineInput();
+        
+        if (_wantsToMove && _standingStill && NextTileIsAccessible()) {
+            _designatedTile = _currentTile + DirectionToVector2(_direction);
+            StartCoroutine(Movement(_designatedTile, _currentTile));
+        } 
+        
+        if (!_wantsToMove && _standingStill) {
+            _animator.SetInteger("Direction", (int) _direction);
+            _animator.SetBool("Moving", false);
         }
-
-
-        if (_sinceStartOfDirection > 0.1 && _currentTile == _designatedTile) {
-            _moving = true;
-            if (NextTileIsAccessible()) {
-                _designatedTile = _currentTile + DirectionToVector2(_nextDirection);
-            }
-        }
-
-        if (_designatedTile != _currentTile) {
-            var distanceFromDesignatedTile = ((Vector2) transform.position - _offset - _designatedTile);
-            var directionComponent = GetComponent(distanceFromDesignatedTile, DirectionToVector2(_direction));
-
-            if (directionComponent > 0.0f) {
-                _currentTile = _designatedTile;
-                _direction = _nextDirection;
-                if (wantToMove && NextTileIsAccessible()) {
-                    transform.position += (Vector3) DirectionToVector2(_direction) * _velocity * Time.fixedDeltaTime;
-                    _designatedTile = _currentTile + DirectionToVector2(_direction);
-                } else {
-                    transform.position = (Vector3) (_designatedTile + _offset);
-                }
-
-                if (wantToMove == false)
-                    _moving = false;
-            } else {
-                transform.position += (Vector3) DirectionToVector2(_direction) * _velocity * Time.fixedDeltaTime;
-            }
-        } else {
-            _direction = _nextDirection;
-        }
-
-
-        _animator.SetInteger("Direction", (int) _direction);
-        _animator.SetBool("Moving", _moving);
+        
     }
 
     bool DetermineInput()
     {
-        if (Input.GetAxis("Horizontal") > 0.1) {
+        if (Input.GetAxisRaw("Horizontal") > 0.1) {
             return SetDirection(Direction.Right);
-        } else if (Input.GetAxis("Horizontal") < -0.1) {
+        } else if (Input.GetAxisRaw("Horizontal") < -0.1) {
             return SetDirection(Direction.Left);
         }
 
-        if (Input.GetAxis("Vertical") > 0.1) {
+        if (Input.GetAxisRaw("Vertical") > 0.1) {
             return SetDirection(Direction.Up);
-        } else if (Input.GetAxis("Vertical") < -0.1) {
+        } else if (Input.GetAxisRaw("Vertical") < -0.1) {
             return SetDirection(Direction.Down);
         }
 
@@ -117,6 +85,28 @@ public class PlayerControllerScript : MonoBehaviour
 
         return true;
     }
+    
+    IEnumerator Movement (Vector2 targetTile, Vector2 currentTile)
+    {
+        _animator.SetBool("Moving", true);
+        _animator.SetInteger("Direction", (int) _direction);
+        _standingStill = false;
+        
+        while(GetComponent(targetTile - ((Vector2)transform.position - _offset),DirectionToVector2(_direction)) > 0.0f)
+        {
+            Vector2 position = transform.position;
+            var deltaPos = (targetTile - currentTile).normalized * _velocity * Time.fixedDeltaTime;
+            transform.position = position + deltaPos;
+            
+            yield return null;
+        }
+
+        transform.position = targetTile + _offset;
+
+        _standingStill = true;
+        _currentTile = targetTile;
+    }
+
 
     public void MoveForward(int steps)
     {
@@ -152,10 +142,12 @@ public class PlayerControllerScript : MonoBehaviour
 
     public bool SetDirection(Direction direction)
     {
-        _sinceStartOfDirection += Time.fixedDeltaTime;
-        _nextDirection = direction;
-
-        return true;
+        if (direction != _direction)
+            _timeSinceDirectionChange = 0.0f;
+        
+        _direction = direction;
+        _timeSinceDirectionChange += Time.deltaTime;
+        return _timeSinceDirectionChange > 0.1f;
     }
 
     private Vector2 DirectionToVector2(Direction direction)
