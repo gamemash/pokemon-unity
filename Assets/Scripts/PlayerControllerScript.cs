@@ -44,8 +44,7 @@ public class PlayerControllerScript : MonoBehaviour
         _wantsToMove = DetermineInput();
         
         if (_wantsToMove && _standingStill && NextTileIsAccessible()) {
-            _designatedTile = _currentTile + DirectionToVector2(_direction);
-            StartCoroutine(Movement(_designatedTile, _currentTile));
+            MoveForward(1);
         } 
         
         if (!_wantsToMove && _standingStill) {
@@ -92,12 +91,12 @@ public class PlayerControllerScript : MonoBehaviour
     {
         _animator.SetBool("Moving", true);
         _animator.SetInteger("Direction", (int) _direction);
-        _standingStill = false;
+        var directionVector = DirectionToVector2(_direction);
         
-        while(GetComponent(targetTile - ((Vector2)transform.position - _offset),DirectionToVector2(_direction)) > 0.0f)
+        while(GetComponent(targetTile - ((Vector2)transform.position - _offset), directionVector) > 0.0f)
         {
             Vector2 position = transform.position;
-            var deltaPos = (targetTile - currentTile).normalized * _velocity * Time.fixedDeltaTime;
+            var deltaPos = directionVector * _velocity * Time.fixedDeltaTime;
             transform.position = position + deltaPos;
             
             yield return new WaitForFixedUpdate();
@@ -113,6 +112,7 @@ public class PlayerControllerScript : MonoBehaviour
     public float MoveForward(int steps)
     {
         _designatedTile = _currentTile + DirectionToVector2(_direction) * steps;
+        _standingStill = false;
         StartCoroutine(Movement(_designatedTile, _currentTile));
         return steps / _velocity;
     }
