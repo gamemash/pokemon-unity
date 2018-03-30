@@ -21,9 +21,8 @@ GameObject:
   - component: {fileID: 4753614681014566}
   - component: {fileID: 212313577551014690}
   - component: {fileID: 95128130646490968}
-  - component: {fileID: 114587756504760044}
   - component: {fileID: 61247528676198986}
-  - component: {fileID: 320942416358150700}
+  - component: {fileID: 114711632038690420}
   m_Layer: 0
   m_Name: Door
   m_TagString: Pathway
@@ -37,7 +36,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1847128677301064}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -4.5, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -78,7 +77,7 @@ Animator:
   m_GameObject: {fileID: 1847128677301064}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ac976eee5a38a704e92f7f0f1a29c4e9, type: 2}
+  m_Controller: {fileID: 9100000, guid: d0c79d2f064e7c74494f2bdf81d87942, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -86,7 +85,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114587756504760044
+--- !u!114 &114711632038690420
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -94,10 +93,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1847128677301064}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f75dc2df30d4fc47a7c031ca3c27483, type: 3}
+  m_Script: {fileID: 11500000, guid: 369cde5793336454eaa62951d34766c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GoToScene: PalletHome
+  SceneName: Home
+  EntranceName: DoorHome
 --- !u!212 &212313577551014690
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -142,34 +142,3 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
---- !u!320 &320942416358150700
-PlayableDirector:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1847128677301064}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: 1262331b11f8fcf439c6de7988eb6194, type: 2}
-  m_InitialState: 0
-  m_WrapMode: 2
-  m_DirectorUpdateMode: 1
-  m_InitialTime: 0
-  m_SceneBindings:
-  - key: {fileID: 114839896414582794, guid: 1262331b11f8fcf439c6de7988eb6194, type: 2}
-    value: {fileID: 1847128677301064}
-  - key: {fileID: 0}
-    value: {fileID: 0}
-  - key: {fileID: 0}
-    value: {fileID: 0}
-  - key: {fileID: 0}
-    value: {fileID: 0}
-  - key: {fileID: 114664244679079998, guid: 1262331b11f8fcf439c6de7988eb6194, type: 2}
-    value: {fileID: 0}
-  - key: {fileID: 114760294741484906, guid: 1262331b11f8fcf439c6de7988eb6194, type: 2}
-    value: {fileID: 0}
-  - key: {fileID: 114522800690170650, guid: 1262331b11f8fcf439c6de7988eb6194, type: 2}
-    value: {fileID: 0}
-  m_ExposedReferences:
-    m_References:
-    - 2e450a5d86808ca43a9871b67fd7dd70: {fileID: 0}

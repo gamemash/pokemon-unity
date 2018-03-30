@@ -21,7 +21,7 @@ public class PlayerControllerScript : MonoBehaviour
     private Animator _animator;
     private readonly Vector2 _offset = new Vector2(0.5f, 0.7f);
 
-    private readonly float _velocity = 3.0f;
+    private readonly float _velocity = 4.0f;
     private float _timeSinceDirectionChange = 0.0f;
 
     private bool _standingStill = true;
@@ -38,8 +38,9 @@ public class PlayerControllerScript : MonoBehaviour
     }
      
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        if (!ReceiveInput) return;
         _wantsToMove = DetermineInput();
         
         if (_wantsToMove && _standingStill && NextTileIsAccessible()) {
@@ -78,7 +79,8 @@ public class PlayerControllerScript : MonoBehaviour
             if (tile.CompareTag("Block")) {
                 return false;
             } else if (tile.CompareTag("Pathway")) {
-                tile.GetComponent<Entrance>().GoThrough();
+                tile.GetComponent<Entrance>().GoThrough(gameObject);
+                ReceiveInput = false;
                 return false;
             }
         }
@@ -98,7 +100,7 @@ public class PlayerControllerScript : MonoBehaviour
             var deltaPos = (targetTile - currentTile).normalized * _velocity * Time.fixedDeltaTime;
             transform.position = position + deltaPos;
             
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
 
         transform.position = targetTile + _offset;
@@ -108,9 +110,11 @@ public class PlayerControllerScript : MonoBehaviour
     }
 
 
-    public void MoveForward(int steps)
+    public float MoveForward(int steps)
     {
         _designatedTile = _currentTile + DirectionToVector2(_direction) * steps;
+        StartCoroutine(Movement(_designatedTile, _currentTile));
+        return steps / _velocity;
     }
 
     public GameObject GetTileInFront()
@@ -131,6 +135,7 @@ public class PlayerControllerScript : MonoBehaviour
                     if (GetComponent(hit.point - _currentTile, currentDirection) < 0.5f) {
                         return hit.collider.gameObject;
                     }
+
 
                     break;
             }
