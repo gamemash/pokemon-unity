@@ -6,7 +6,8 @@ using UnityEngine.Playables;
 public class GameControllerScript : MonoBehaviour
 {
 
-	public GameObject BattleTransition;
+	public GameObject Camera;
+	private GameObject _player;
 	
 	// Use this for initialization
 	void Awake ()
@@ -19,12 +20,14 @@ public class GameControllerScript : MonoBehaviour
 		var playerPrefab = Resources.Load("Prefabs/AshContainer") as GameObject;
 		var playerContainer = Instantiate(playerPrefab);
 		playerContainer.name = "PlayerContainer";
+		_player = playerContainer.transform.Find("Ash").gameObject;
+		Camera.transform.parent = _player.transform;
 	}
 
 	private void SpawnBattleTransition()
 	{
 		var prefab = Resources.Load("Prefabs/BattleTransitionContainer") as GameObject;
-		var container = Instantiate(prefab);
+		Instantiate(prefab);
 	}
 	
 
@@ -35,8 +38,8 @@ public class GameControllerScript : MonoBehaviour
 		{
 			SpawnBattleTransition();
 		}
+		
 	}
-
 
 	public static void BindPlayerToDirector(PlayableDirector director)
 	{
