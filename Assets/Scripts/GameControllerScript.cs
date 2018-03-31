@@ -5,6 +5,9 @@ using UnityEngine.Playables;
 
 public class GameControllerScript : MonoBehaviour
 {
+
+	public GameObject BattleTransition;
+	
 	// Use this for initialization
 	void Awake ()
 	{
@@ -18,11 +21,20 @@ public class GameControllerScript : MonoBehaviour
 		playerContainer.name = "PlayerContainer";
 	}
 
+	private void SpawnBattleTransition()
+	{
+		var prefab = Resources.Load("Prefabs/BattleTransitionContainer") as GameObject;
+		var container = Instantiate(prefab);
+	}
+	
+
 	// Update is called once per frame
 	void Update () {
-		// if (Input.GetButtonDown("Submit")) {
-		// 	Player.GetComponent<PlayerControllerScript>().ReceiveInput = !Player.GetComponent<PlayerControllerScript>().ReceiveInput;
-		// }
+		
+		if (Input.GetButtonDown("Submit"))
+		{
+			SpawnBattleTransition();
+		}
 	}
 
 

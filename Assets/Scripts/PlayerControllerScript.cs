@@ -54,11 +54,6 @@ public class PlayerControllerScript : MonoBehaviour
             _animator.SetBool("Moving", false);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StartCoroutine(ThroughDoorAnimation());
-        }
-        
     }
 
     bool DetermineInput()
