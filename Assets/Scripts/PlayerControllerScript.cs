@@ -21,7 +21,7 @@ public class PlayerControllerScript : MonoBehaviour
     private Animator _animator;
     private readonly Vector2 _offset = new Vector2(0.5f, 0.7f);
 
-    private readonly float _velocity = 3.0f;
+    private readonly float _velocity = 4.0f;
     private float _timeSinceDirectionChange = 0.0f;
 
     private bool _standingStill = true;
@@ -38,15 +38,13 @@ public class PlayerControllerScript : MonoBehaviour
     }
      
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!ReceiveInput) return;
-        
         _wantsToMove = DetermineInput();
         
         if (_wantsToMove && _standingStill && NextTileIsAccessible()) {
-            _designatedTile = _currentTile + DirectionToVector2(_direction);
-            StartCoroutine(Movement(_designatedTile, _currentTile));
+            MoveForward(1);
         } 
         
         if (!_wantsToMove && _standingStill) {
@@ -80,13 +78,8 @@ public class PlayerControllerScript : MonoBehaviour
             if (tile.CompareTag("Block")) {
                 return false;
             } else if (tile.CompareTag("Pathway")) {
-                tile.GetComponent<Entrance>().GoThrough();
-                return false;
-            } else if (tile.CompareTag("Respawn"))
-            {
-                Debug.Log(tile);
+                tile.GetComponent<Entrance>().GoThrough(gameObject);
                 ReceiveInput = false;
-                tile.GetComponent<DoorScript>().GoThrough(gameObject);
                 return false;
             }
         }
@@ -107,15 +100,15 @@ public class PlayerControllerScript : MonoBehaviour
     {
         _animator.SetBool("Moving", true);
         _animator.SetInteger("Direction", (int) _direction);
-        _standingStill = false;
+        var directionVector = DirectionToVector2(_direction);
         
-        while(GetComponent(targetTile - ((Vector2)transform.position - _offset),DirectionToVector2(_direction)) > 0.0f)
+        while(GetComponent(targetTile - ((Vector2)transform.position - _offset), directionVector) > 0.0f)
         {
             Vector2 position = transform.position;
-            var deltaPos = (targetTile - currentTile).normalized * _velocity * Time.fixedDeltaTime;
+            var deltaPos = directionVector * _velocity * Time.fixedDeltaTime;
             transform.position = position + deltaPos;
             
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
 
         transform.position = targetTile + _offset;
@@ -125,10 +118,12 @@ public class PlayerControllerScript : MonoBehaviour
     }
 
 
-    public void MoveForward(int steps)
+    public float MoveForward(int steps)
     {
         _designatedTile = _currentTile + DirectionToVector2(_direction) * steps;
+        _standingStill = false;
         StartCoroutine(Movement(_designatedTile, _currentTile));
+        return steps / _velocity;
     }
 
     public GameObject GetTileInFront()
@@ -149,6 +144,7 @@ public class PlayerControllerScript : MonoBehaviour
                     if (GetComponent(hit.point - _currentTile, currentDirection) < 0.5f) {
                         return hit.collider.gameObject;
                     }
+
 
                     break;
             }

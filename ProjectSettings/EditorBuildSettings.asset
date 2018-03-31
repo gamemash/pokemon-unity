@@ -11,6 +11,3 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PalletTown/Home.unity
     guid: 644449e57a788d34b83e2e416c9ef1eb
-  - enabled: 1
-    path: Assets/Scenes/PalletTown/HomeUpstairs.unity
-    guid: cdcebc2e457a83944a3b7f715fba6df5
