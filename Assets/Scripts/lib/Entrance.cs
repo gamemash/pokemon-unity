@@ -18,7 +18,6 @@ public class Entrance : MonoBehaviour
     public virtual IEnumerator PlayArrivalAnimation(GameObject gameObject)
     {
         SetPosition(gameObject);
-        LoadScene();
         yield return null;
     }
 

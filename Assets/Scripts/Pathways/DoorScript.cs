@@ -21,17 +21,20 @@ public class DoorScript : Entrance
 
     public override IEnumerator PlayArrivalAnimation(GameObject gameObject)
     {
+        GameControllerScript.GetActiveGameController().DemandFocus();
         var player = gameObject.GetComponent<PlayerControllerScript>();
         player.SetPosition((Vector2)transform.position - new Vector2(0.5f, 0.5f) +  Vector2.up);
         player.SetDirection(PlayerControllerScript.Direction.Down);
         yield return new WaitForSeconds(Open());
         yield return new WaitForSeconds(player.MoveForward(2));
         yield return new WaitForSeconds(Close());
+        GameControllerScript.GetActiveGameController().ReleaseFocus();
     }
 
     public override IEnumerator PlayEntranceAnimation(GameObject gameObject)
     {
         var player = gameObject.GetComponent<PlayerControllerScript>();
+        GameControllerScript.GetActiveGameController().DemandFocus();
         
         yield return new WaitForSeconds(Open());
         yield return new WaitForSeconds(player.MoveForward(2));

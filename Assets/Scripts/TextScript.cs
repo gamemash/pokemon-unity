@@ -19,14 +19,13 @@ public class TextScript : MonoBehaviour
 	{
 
 		_textComponent = GetComponent<Text>();
-		var length = text.Length;
-		string currentText = "";
-        float speed = 0.1f;
-		while (currentText.Length < length)
+		var currentCharacter = 0.0f;
+		var velocity = 20.0f;
+		while (currentCharacter < text.Length)
 		{
-			currentText += text[currentText.Length];
-			_textComponent.text = currentText;
-			yield return new WaitForSeconds(speed);
+			currentCharacter += velocity * Time.fixedDeltaTime;
+			_textComponent.text = text.Substring(0, (int)currentCharacter);
+			yield return new WaitForFixedUpdate();
 		}
 
 		_atEnd = true;
