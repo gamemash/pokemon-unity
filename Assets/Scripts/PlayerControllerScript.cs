@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using lib;
 using UnityEngine;
 
 public class PlayerControllerScript : MonoBehaviour
@@ -52,6 +53,12 @@ public class PlayerControllerScript : MonoBehaviour
             _animator.SetBool("Moving", false);
         }
 
+
+        if (Input.GetButtonDown("A"))
+        {
+            Interact(GetTileInFront());
+        }
+
     }
 
     bool DetermineInput()
@@ -71,11 +78,19 @@ public class PlayerControllerScript : MonoBehaviour
         return false;
     }
 
+    private void Interact(GameObject tile)
+    {
+        if (tile && tile.CompareTag("Interactable"))
+        {
+            tile.GetComponent<Interactable>().Interact();
+        }
+    }
+
     private bool NextTileIsAccessible()
     {
         var tile = GetTileInFront();
         if (tile != null) {
-            if (tile.CompareTag("Block")) {
+            if (tile.CompareTag("Block") || tile.CompareTag("Interactable")) {
                 return false;
             } else if (tile.CompareTag("Pathway")) {
                 tile.GetComponent<Entrance>().GoThrough(gameObject);

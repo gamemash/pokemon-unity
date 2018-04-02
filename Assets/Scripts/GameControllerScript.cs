@@ -29,6 +29,22 @@ public class GameControllerScript : MonoBehaviour
 		var prefab = Resources.Load("Prefabs/BattleTransitionContainer") as GameObject;
 		Instantiate(prefab);
 	}
+
+	public void DemandFocus()
+	{
+		GetPlayer().ReceiveInput = false;
+	}
+
+	public void ReleaseFocus()
+	{
+		
+		GetPlayer().ReceiveInput = true;
+	}
+
+	private PlayerControllerScript GetPlayer()
+	{
+		return _player.GetComponent<PlayerControllerScript>();
+	}
 	
 
 	// Update is called once per frame
@@ -36,23 +52,13 @@ public class GameControllerScript : MonoBehaviour
 		
 		if (Input.GetButtonDown("Submit"))
 		{
-			SpawnBattleTransition();
+			//SpawnBattleTransition();
 		}
 		
 	}
 
-	public static void BindPlayerToDirector(PlayableDirector director)
+	public static GameControllerScript GetActiveGameController()
 	{
-        foreach (var output in director.playableAsset.outputs) {
-            // identify the tracks that you want to bind
-            switch (output.streamName) {
-                case "Player":
-                    director.SetGenericBinding(output.sourceObject, GameObject.Find("PlayerContainer/Ash"));
-                    break;
-                case "PlayerContainer":
-                    director.SetGenericBinding(output.sourceObject, GameObject.Find("PlayerContainer"));
-                    break;
-            }
-        }
+		return GameObject.Find("GameController").GetComponent<GameControllerScript>();
 	}
 }
